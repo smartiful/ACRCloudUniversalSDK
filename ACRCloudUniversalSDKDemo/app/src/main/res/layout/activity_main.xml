@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.acrcloud.acrclouduniversalsdkdemo.MainActivity">
+
+    <ScrollView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:id="@+id/container"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:orientation="vertical">
+
+            <com.google.android.material.button.MaterialButtonToggleGroup
+                android:id="@+id/audio_engine_toggle_group"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:checkedButton="@+id/line_in_audio_button"
+                app:singleSelection="true">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/record_audio_button"
+                    style="?attr/materialButtonOutlinedStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Recored Audio" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/line_in_audio_button"
+                    style="?attr/materialButtonOutlinedStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Line-in Audio" />
+            </com.google.android.material.button.MaterialButtonToggleGroup>
+
+
+            <Button
+                android:id="@+id/start"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="32dp"
+                android:text="@string/start" />
+
+            <Button
+                android:id="@+id/cancel"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="32dp"
+                android:enabled="false"
+                android:text="@string/cancel" />
+
+            <Button
+                android:id="@+id/request_radio_meta"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="32dp"
+                android:text="@string/request_radio_meta" />
+
+            <TextView
+                android:id="@+id/auto_switch_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/auto_switch_label"
+                android:textColor="#000000" />
+
+            <androidx.appcompat.widget.SwitchCompat
+                android:id="@+id/auto_switch"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="15pt"
+                android:textColor="#000000"
+                android:textOff="@string/auto_switch_open"
+                android:textOn="@string/auto_switch_close" />
+
+            <TextView
+                android:id="@+id/volume"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:textColor="#000000" />
+
+            <TextView
+                android:id="@+id/time"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:textColor="#ffffff" />
+
+            <TextView
+                android:id="@+id/result"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/colorPrimaryDark"
+                android:textColor="#ffffff" />
+
+            <androidx.media3.ui.PlayerView
+                android:id="@+id/video_view"
+                android:layout_width="match_parent"
+                android:layout_height="500dp"
+                app:resize_mode="zoom"
+                app:show_buffering="always"
+                app:surface_type="texture_view"
+                app:use_controller="false" />
+
+        </LinearLayout>
+    </ScrollView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

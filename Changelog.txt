@@ -1,0 +1,189 @@
+version 1.3.26
+- Adjusted the timing of stop recording.
+
+version 1.3.25
+- Adjusted the timing of starting recording.
+
+version 1.3.24
+- Add "Linein" record mode, default recorderType=RecorderType.DEFAULT.
+-     this.mConfig.recorderType = ACRCloudConfig.RecorderType.LINEIN
+
+version 1.3.23
+- Limit recording buffer size.
+
+version 1.3.22
+- fixed stop bug.
+
+version 1.3.21
+- Add startPreRecord(int reservedRecordAudioMS).
+
+version 1.3.20
+- Check record buffer size.
+
+version 1.3.19
+- Fix memory overflow bug for humming fingerprint.
+
+version 1.3.18
+- 1 Optimize humming fingerprint.
+
+version 1.3.17
+- Optimize humming fingerprint.
+
+version 1.3.16
+- Fix (cancel >> startRecgnize) record permission bug.
+
+version 1.3.15
+- Fix AudioRecord leak bug.
+
+version 1.3.14
+- 6 Fix NullPointerException of Recorder.
+
+version 1.3.13
+- 5 Fix NullPointerException of Recorder.
+
+version 1.3.12
+- 4 Fix NullPointerException of Recorder.
+
+version 1.3.11
+- 3 Fix NullPointerException of Recorder.
+
+version 1.3.10
+- 2 Fix NullPointerException of Recorder.
+
+version 1.3.9
+- Fix NullPointerException of Recorder.
+
+version 1.3.8
+- AudioRecord supports Multi-channel.
+
+version 1.3.7
+- Optimize humming fingerprint.
+
+version 1.3.6
+- Add clearAudioBuffer function.
+- Add new humming fingerprint type.
+
+version 1.3.5
+- Add some host config.
+
+version 1.3.3
+- Add memory test for "resample".
+
+version 1.3.2
+- Add "isLogin" config.
+
+version 1.3.1
+- Support dynamically updating accesskey.
+    - ACRCloudConfig.RecognizerConfig c1 = new ACRCloudConfig.RecognizerConfig();
+    - c1.host = "";
+    - c1.accessKey = "";
+    - c1.accessSecret = "";
+    - this.mClient.startRecognize(c1)
+
+version 1.2.31
+- Support the server to control the automatic identification interval.
+
+version 1.2.30
+- Recompile So.
+
+version 1.2.29
+- Enhanced some security configurations.
+
+version 1.2.28
+- Remove the Get parameters of the identify URL.
+
+version 1.2.27
+- Enhanced some security configurations.
+
+version 1.2.26
+- Enhanced some security configurations.
+
+version 1.2.25
+- Replace "MD5" with "SHA-256" to Gen ACRCloud ID.
+
+version 1.2.24
+- Add "recognizeFingerprint" function.
+
+version 1.2.23
+- Add only create fingerprint.
+
+version 1.2.22
+- Check if function "recognize" is running on the UI Main Thread.
+
+version 1.2.21
+- Add "AudioDeviceInfo" to "ACRCloudConfig.RecorderConfig", you can config it by "this.mConfig.recorderConfig.audioDeviceInfo".
+
+version 1.2.20
+- Add "IACRCloudRecordDataListener", It can return the current recorded data in real time.
+
+version 1.2.18
+- Fix some bugs of humming fingerprint.
+
+version 1.2.17
+- Fix NULL Poiner Exception Bug.
+
+version 1.2.15
+- Replace http with https for Login API.
+
+version 1.2.14
+- Adjusted the internal structure of sdk.
+
+version 1.2.13
+- Radio API add "device_id".
+
+version 1.2.12
+- Add "ACRCloudUtils.pcm2Wav" function, you can use it to
+-     encode PCM Data to WAV Data.
+
+version 1.2.11
+- optimize humming fingerprint.
+
+version 1.2.10
+- Reduced the size of the share library.
+
+version 1.2.9
+- Add function recognize with userParams.
+
+version 1.2.8
+- Limit the minimum length of humming audio.
+
+version 1.2.7
+- Fix recorder ByteArrayOutputStream OutOfMemoryError.
+
+version 1.2.6
+- Update IllegalThreadStateException.
+
+version 1.2.5
+- Optimize humming fingerprint.
+
+version 1.2.4
+- Optimize some Auto recognize parameters.
+
+version 1.2.3
+- Optimize http parameters.
+
+version 1.2.2
+- "recognize()" supports humming.
+
+version 1.2.1
+- support user's recorder.
+-    this.mConfig.recorderType = ACRCloudConfig.RecorderType.RECORDER_USER;
+-    this.mConfig.userRecorderEngine = new RecorderUserTest();
+
+version 1.2.0
+- Optimize fingerprint mode.
+
+version 1.1.2
+- Add humming recognition.
+
+version 1.1.1
+- Modify radio search function.
+
+version 1.1.0
+- Add radio search function and fixed some bugs.
+
+version 1.0.1
+- RecorderType add "USER" option, support user's pcm stream.
+
+version 1.0.0
+- init version.
