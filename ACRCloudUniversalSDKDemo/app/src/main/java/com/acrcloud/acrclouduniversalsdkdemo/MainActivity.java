@@ -35,10 +35,7 @@ import com.acrcloud.rec.IACRCloudPartnerDeviceInfo;
 import com.acrcloud.rec.IACRCloudRadioMetadataListener;
 import com.acrcloud.rec.utils.ACRCloudLogger;
 import com.google.android.material.button.MaterialButtonToggleGroup;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
+import com.google.gson.Gson;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -136,6 +133,7 @@ public class MainActivity extends AppCompatActivity implements IACRCloudListener
         binding.start.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View arg0) {
+                mTres = "\n";
                 viewModel.setRecognizing(true);
             }
         });
@@ -185,6 +183,8 @@ public class MainActivity extends AppCompatActivity implements IACRCloudListener
 
         this.mConfig.recorderConfig.rate = 8000;
         this.mConfig.recorderConfig.channels = 1;
+        this.mConfig.sessionAutoCancel = false;
+        this.mConfig.recorderType = ACRCloudConfig.RecorderType.LINEIN;
 
         this.mConfig.acrcloudPartnerDeviceInfo = new IACRCloudPartnerDeviceInfo() {
             @Override
@@ -231,11 +231,11 @@ public class MainActivity extends AppCompatActivity implements IACRCloudListener
 
     public void playMedia() {
         try {
-            //Uri videoUri = Uri.parse("android.resource://com.acrcloud.acrclouduniversalsdkdemo/raw/txvideo_20250304_114359");
+            Uri videoUri = Uri.parse("android.resource://com.acrcloud.acrclouduniversalsdkdemo/raw/txvideo_20250304_114359");
             //Uri videoUri = Uri.parse("android.resource://com.acrcloud.acrclouduniversalsdkdemo/raw/txvideo_wasai_20250304_212056");
-            Uri videoUri = Uri.parse("https://video.wasai-app-dev.com/0d498fea-a67c-4371-ab28-fa7ad77856d1/hls/TXVideo_20250306_091718_b13954ad-9e33-498c-8d20-26febb4524f3_1080x1920p_qvbr.m3u8");
+            //Uri videoUri = Uri.parse("https://video.wasai-app-dev.com/0d498fea-a67c-4371-ab28-fa7ad77856d1/hls/TXVideo_20250306_091718_b13954ad-9e33-498c-8d20-26febb4524f3_1080x1920p_qvbr.m3u8");
             MediaItem mediaItem = new MediaItem.Builder().setUri(videoUri)
-                    .setMimeType(MimeTypes.APPLICATION_M3U8)
+                    //.setMimeType(MimeTypes.APPLICATION_M3U8)
                     .build();
             exoPlayer.setMediaItem(mediaItem);
             exoPlayer.addListener(new Player.Listener() {
@@ -332,6 +332,7 @@ public class MainActivity extends AppCompatActivity implements IACRCloudListener
         mProcessing = false;
     }
 
+    String mTres = "\n";
     @Override
     public void onResult(ACRCloudResult results) {
         this.reset();
@@ -347,37 +348,48 @@ public class MainActivity extends AppCompatActivity implements IACRCloudListener
 
         String result = results.getResult();
 
-        String tres = "\n";
-
         try {
-            JSONObject j = new JSONObject(result);
-            JSONObject j1 = j.getJSONObject("status");
-            int j2 = j1.getInt("code");
-            if (j2 == 0) {
-                JSONObject metadata = j.getJSONObject("metadata");
-                //
-                if (metadata.has("music")) {
-                    JSONArray musics = metadata.getJSONArray("music");
-                    for (int i = 0; i < musics.length(); i++) {
-                        JSONObject tt = (JSONObject) musics.get(i);
-                        String title = tt.getString("title");
-                        JSONArray artistt = tt.getJSONArray("artists");
-                        JSONObject art = (JSONObject) artistt.get(0);
-                        String artist = art.getString("name");
-                        tres = tres + (i + 1) + ".  Title: " + title + "    Artist: " + artist + "\n";
-                    }
-                }
-
-                tres = tres + "\n\n" + result;
-            } else {
-                tres = result;
+//            JSONObject j = new JSONObject(result);
+//            JSONObject j1 = j.getJSONObject("status");
+//            int j2 = j1.getInt("code");
+//            if (j2 == 0) {
+//                JSONObject metadata = j.getJSONObject("metadata");
+//                //
+//                if (metadata.has("music")) {
+//                    JSONArray musics = metadata.getJSONArray("music");
+//                    for (int i = 0; i < musics.length(); i++) {
+//                        JSONObject tt = (JSONObject) musics.get(i);
+//                        String title = tt.getString("title");
+//                        JSONArray artistt = tt.getJSONArray("artists");
+//                        JSONObject art = (JSONObject) artistt.get(0);
+//                        String artist = art.getString("name");
+//                        tres = tres + (i + 1) + ".  Title: " + title + "    Artist: " + artist + "\n";
+//                    }
+//                }
+//
+//                tres = tres + "\n\n" + result;
+//            } else {
+//                tres = result;
+//            }
+            Gson gson = new Gson();
+            MetaResponse response = gson.fromJson(result, MetaResponse.class);
+            for(int count = 0; count < response.metadata.music.size(); count++){
+                Music music = response.metadata.music.get(count);
+                String item = music.album.name + "\n"
+                        + "     play_offset_ms\t\t\t\t\t\t\t\t" + music.play_offset_ms + "\n"
+                        + "     sample_begin_time_offset_ms\t" + music.sample_begin_time_offset_ms + "\n"
+                        + "     sample_end_time_offset_ms\t\t" + music.sample_end_time_offset_ms + "\n"
+                        + "     db_begin_time_offset_ms\t\t\t" + music.db_begin_time_offset_ms + "\n"
+                        + "     db_end_time_offset_ms\t\t\t\t" + music.db_end_time_offset_ms + "\n";
+                mTres = mTres + item;
             }
-        } catch (JSONException e) {
-            tres = result;
+        } catch (Exception e) {
+            mTres = mTres + "\n" + result;
             e.printStackTrace();
         }
 
-        binding.result.setText(tres);
+        mTres = mTres + "\n" +"--------------------" + "\n";
+        binding.result.setText(mTres);
         startTime = System.currentTimeMillis();
     }
 
