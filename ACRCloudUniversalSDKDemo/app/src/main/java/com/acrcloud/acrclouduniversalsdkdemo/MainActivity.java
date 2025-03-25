@@ -12,6 +12,7 @@ import android.widget.CompoundButton;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.graphics.Insets;
@@ -21,11 +22,9 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.media3.common.AudioAttributes;
 import androidx.media3.common.C;
 import androidx.media3.common.MediaItem;
-import androidx.media3.common.MimeTypes;
 import androidx.media3.common.PlaybackException;
 import androidx.media3.common.Player;
 import androidx.media3.exoplayer.ExoPlayer;
-
 import com.acrcloud.acrclouduniversalsdkdemo.databinding.ActivityMainBinding;
 import com.acrcloud.rec.ACRCloudClient;
 import com.acrcloud.rec.ACRCloudConfig;
@@ -34,6 +33,7 @@ import com.acrcloud.rec.IACRCloudListener;
 import com.acrcloud.rec.IACRCloudPartnerDeviceInfo;
 import com.acrcloud.rec.IACRCloudRadioMetadataListener;
 import com.acrcloud.rec.utils.ACRCloudLogger;
+import com.acrcloud.rec.utils.ACRCloudUtils;
 import com.google.android.material.button.MaterialButtonToggleGroup;
 import com.google.gson.Gson;
 
@@ -70,7 +70,7 @@ public class MainActivity extends AppCompatActivity implements IACRCloudListener
 
         viewModel = new ViewModelProvider(this).get(MainViewModel.class);
 
-        path = Environment.getExternalStorageDirectory().toString()
+        path = getExternalCacheDir().toString()
                 + "/acrcloud";
         Log.e(TAG, path);
 
@@ -78,6 +78,8 @@ public class MainActivity extends AppCompatActivity implements IACRCloudListener
         if (!file.exists()) {
             file.mkdirs();
         }
+
+        ACRCloudLogger.setLog(true);
 
         initPlayer();
         initAudioEngineSelector();
@@ -184,7 +186,7 @@ public class MainActivity extends AppCompatActivity implements IACRCloudListener
         this.mConfig.recorderConfig.rate = 8000;
         this.mConfig.recorderConfig.channels = 1;
         this.mConfig.sessionAutoCancel = false;
-        this.mConfig.recorderType = ACRCloudConfig.RecorderType.LINEIN;
+        //this.mConfig.recorderType = ACRCloudConfig.RecorderType.LINEIN;
 
         this.mConfig.acrcloudPartnerDeviceInfo = new IACRCloudPartnerDeviceInfo() {
             @Override
@@ -231,9 +233,10 @@ public class MainActivity extends AppCompatActivity implements IACRCloudListener
 
     public void playMedia() {
         try {
-            Uri videoUri = Uri.parse("android.resource://com.acrcloud.acrclouduniversalsdkdemo/raw/txvideo_20250304_114359");
+            //Uri videoUri = Uri.parse("android.resource://com.acrcloud.acrclouduniversalsdkdemo/raw/txvideo_20250304_114359");
             //Uri videoUri = Uri.parse("android.resource://com.acrcloud.acrclouduniversalsdkdemo/raw/txvideo_wasai_20250304_212056");
             //Uri videoUri = Uri.parse("https://video.wasai-app-dev.com/0d498fea-a67c-4371-ab28-fa7ad77856d1/hls/TXVideo_20250306_091718_b13954ad-9e33-498c-8d20-26febb4524f3_1080x1920p_qvbr.m3u8");
+            Uri videoUri = Uri.parse("https://video.wasaiapp.com/0cf5ce7c-bfb6-4c3f-b813-e62cc70d7324/hls/TXVideo_20250322_131127_9b79f795-21ad-4e3f-8e35-4fe0f257b44e_1080x1920p_qvbr.m3u8");
             MediaItem mediaItem = new MediaItem.Builder().setUri(videoUri)
                     //.setMimeType(MimeTypes.APPLICATION_M3U8)
                     .build();
@@ -333,18 +336,18 @@ public class MainActivity extends AppCompatActivity implements IACRCloudListener
     }
 
     String mTres = "\n";
+    int writeCount = 0;
     @Override
     public void onResult(ACRCloudResult results) {
         this.reset();
 
         // If you want to save the record audio data, you can refer to the following codes.
-	/*
-	byte[] recordPcm = results.getRecordDataPCM();
-        if (recordPcm != null) {
+	    byte[] recordPcm = results.getRecordDataPCM();
+        if (recordPcm != null && writeCount == 0) {
             byte[] recordWav = ACRCloudUtils.pcm2Wav(recordPcm, this.mConfig.recorderConfig.rate, this.mConfig.recorderConfig.channels);
-            ACRCloudUtils.createFileWithByte(recordWav, path + "/" + "record.wav");
+            ACRCloudUtils.createFileWithByte(recordWav, path + "/" + "record_" + writeCount + ".wav");
+            writeCount++;
         }
-	*/
 
         String result = results.getResult();
 
@@ -399,12 +402,13 @@ public class MainActivity extends AppCompatActivity implements IACRCloudListener
         binding.volume.setText(getResources().getString(R.string.volume) + volume + "\n\nTime: " + time + " s");
     }
 
-    private static final int REQUEST_EXTERNAL_STORAGE = 1;
+    private static final int REQUEST_PERMISSION = 1;
     private static String[] PERMISSIONS = {
+            Manifest.permission.MODIFY_AUDIO_SETTINGS,
             Manifest.permission.ACCESS_NETWORK_STATE,
             Manifest.permission.ACCESS_WIFI_STATE,
             Manifest.permission.INTERNET,
-            Manifest.permission.RECORD_AUDIO
+            Manifest.permission.RECORD_AUDIO,
     };
 
     public void verifyPermissions() {
@@ -412,9 +416,22 @@ public class MainActivity extends AppCompatActivity implements IACRCloudListener
             int permission = ActivityCompat.checkSelfPermission(this, PERMISSIONS[i]);
             if (permission != PackageManager.PERMISSION_GRANTED) {
                 ActivityCompat.requestPermissions(this, PERMISSIONS,
-                        REQUEST_EXTERNAL_STORAGE);
+                        REQUEST_PERMISSION);
                 break;
             }
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        int count = permissions.length;
+        for (int i = 0; i < count; i++){
+            int grantResult = 99999;
+            if (grantResults.length > i){
+                grantResult = grantResults[i];
+            }
+            Log.d("MainActivity", "permission: " + permissions[i] + " grant result: " + grantResult);
         }
     }
 
@@ -436,8 +453,8 @@ public class MainActivity extends AppCompatActivity implements IACRCloudListener
     }
 
     public enum AudioEngineType {
-        RecordAudio("36340fd7235633db2d98f6db5bbde026", "v77HFz9hrnjDle8gJKQz04BBlf8PwzVvbPYWIY7s"),
-        LineInAudio("bd156aed748f1b6268808a9e9ab6ae98", "1VpOAkTfnFUflnrv4fgTjwvQlIpU74BWRqQerYXo");
+        RecordAudio("", ""),
+        LineInAudio("", "");
 
         final String accessKey;
         final String accessSecret;
