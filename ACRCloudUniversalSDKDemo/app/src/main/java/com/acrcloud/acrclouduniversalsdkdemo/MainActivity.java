@@ -72,7 +72,7 @@ public class MainActivity extends AppCompatActivity implements IACRCloudListener
 
         path = getExternalCacheDir().toString()
                 + "/acrcloud";
-        Log.e(TAG, path);
+        Log.d(TAG, "path: [" + path + "]");
 
         File file = new File(path);
         if (!file.exists()) {
@@ -248,6 +248,7 @@ public class MainActivity extends AppCompatActivity implements IACRCloudListener
                 }
             });
             exoPlayer.prepare();
+            exoPlayer.setRepeatMode(Player.REPEAT_MODE_ALL);
             exoPlayer.play();
 
         } catch (Exception e) {
@@ -453,7 +454,7 @@ public class MainActivity extends AppCompatActivity implements IACRCloudListener
     }
 
     public enum AudioEngineType {
-        RecordAudio("", ""),
+        RecordAudio("c605448bdb08b68dcc538f4d721b3dbd", "UwhygsaZhu72tyvQKSkGUxd7tfZKsZznz5uXWsJm"),
         LineInAudio("", "");
 
         final String accessKey;
